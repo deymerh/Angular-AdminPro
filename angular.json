@@ -111,6 +111,9 @@
           }
         }
       }
-    }},
-  "defaultProject": "adminpro"
+    }
+  },
+  "cli": {
+    "analytics": "51b51167-0269-45cb-a3c7-64fd5e665091"
+  }
 }
