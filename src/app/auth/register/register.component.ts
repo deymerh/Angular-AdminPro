@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2'
 
 import { UserService } from '../../services/user.service';
@@ -20,7 +20,7 @@ export class RegisterComponent {
     terms: [false, Validators.required]
   },{validators: this.passwordsEquals('password', 'password2')});
 
-  constructor( private formBuilder:FormBuilder, private userService: UserService ) { }
+  constructor( private formBuilder:UntypedFormBuilder, private userService: UserService ) { }
 
   createUser(){
     this.registerFormSubmitted = true;
@@ -61,7 +61,7 @@ export class RegisterComponent {
   }
 
   passwordsEquals(password:string, password2:string){
-    return (formGroup:FormGroup)=>{
+    return (formGroup:UntypedFormGroup)=>{
       const passwordControl = formGroup.get(password); 
       const password2Control = formGroup.get(password2); 
       if(passwordControl.value === password2Control.value){

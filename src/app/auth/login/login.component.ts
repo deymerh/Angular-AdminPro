@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import Swal from 'sweetalert2';
@@ -20,7 +20,7 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private formBuilder:FormBuilder,
+    private formBuilder:UntypedFormBuilder,
     private userService: UserService ) { }
 
   login() {
