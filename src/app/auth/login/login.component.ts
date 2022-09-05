@@ -13,7 +13,7 @@ export class LoginComponent {
 
   public loginFormSubmitted:boolean = false;
   public loginForm = this.formBuilder.group({
-    email: ['deymer@deymerh.co', [Validators.required, Validators.email]],
+    email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
     password: ['1234567', Validators.required],
     remenberMe: [false]
   });
@@ -27,7 +27,11 @@ export class LoginComponent {
     this.loginFormSubmitted = true;
     this.userService.loginUser(this.loginForm.value)
       .subscribe((response)=>{
-        console.log(response);
+        if (this.loginForm.get('remenberMe').value) {
+          localStorage.setItem('email', this.loginForm.get('email').value);
+        }else{
+          localStorage.removeItem('email');
+        }
       }, ((err)=>{
         Swal.fire({
           icon: 'error',
