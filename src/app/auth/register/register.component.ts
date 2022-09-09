@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2'
 
 import { UserService } from '../../services/user.service';
@@ -20,14 +21,18 @@ export class RegisterComponent {
     terms: [false, Validators.required]
   },{validators: this.passwordsEquals('password', 'password2')});
 
-  constructor( private formBuilder:UntypedFormBuilder, private userService: UserService ) { }
+  constructor(
+    private formBuilder:UntypedFormBuilder,
+    private userService:UserService,
+    private router:Router
+    ) { }
 
   createUser(){
     this.registerFormSubmitted = true;
     if(this.registerForm.valid && this.registerForm.get('terms').value === true){
       this.userService.createUser(this.registerForm.value)
-      .subscribe((response)=>{
-        console.log(response)
+      .subscribe(()=>{
+        this.router.navigateByUrl('/')
       }, ((err)=>{
         Swal.fire({
           icon: 'error',

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
@@ -12,18 +12,22 @@ declare const google: any;
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements AfterViewInit {
+
   @ViewChild('loginGoogle') loginGoogle: ElementRef;
+  
   public loginFormSubmitted: boolean = false;
   public loginForm = this.formBuilder.group({
-    email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
-    password: ['1234567', Validators.required],
+    email: [localStorage.getItem('email') || 'tiago@gmail.com', [Validators.required, Validators.email]],
+    password: ['holamundo', Validators.required],
     remenberMe: [false]
   });
 
   constructor(
     private router: Router,
     private formBuilder: UntypedFormBuilder,
-    private userService: UserService) { }
+    private userService: UserService,
+    private ngZone: NgZone
+    ) { }
 
   ngAfterViewInit(): void {
     this.googleInit();
@@ -32,10 +36,9 @@ export class LoginComponent implements AfterViewInit {
   googleInit() {
     google.accounts.id.initialize({
       client_id: '770488381019-note6ugdkf2puq74lm9f15qo7d9ksbec.apps.googleusercontent.com',
-      callback: this.handleCredentialResponse
+      callback: (response:any)=>this.handleCredentialResponse(response)
     });
     google.accounts.id.renderButton(
-      // document.getElementById("loginGoogle"),
       this.loginGoogle.nativeElement,
       { theme: "outline", size: "large" }  // customization attributes
     );
@@ -43,7 +46,10 @@ export class LoginComponent implements AfterViewInit {
   }
 
   handleCredentialResponse(response: any) {
-    console.log("Encoded JWT ID token: " + response.credential);
+    this.userService.loginWithGoogle(response.credential)
+      .subscribe((): void=>{
+        this.router.navigateByUrl('/');
+      })
   }
 
   login() {
@@ -55,6 +61,9 @@ export class LoginComponent implements AfterViewInit {
         } else {
           localStorage.removeItem('email');
         }
+        this.ngZone.run(()=>{
+          this.router.navigateByUrl('/');
+        })
       }, ((err) => {
         Swal.fire({
           icon: 'error',
@@ -62,7 +71,6 @@ export class LoginComponent implements AfterViewInit {
           text: err.error?.msg + '!',
         })
       }));
-    // this.router.navigateByUrl('/');
   }
 
   fieldNoValid(field: string): boolean {
